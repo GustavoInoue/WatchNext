@@ -1,0 +1,77 @@
+/* src/index.css
+   Design tokens globais do WatchNext.
+   Paleta estilo "streaming noturno": fundo preto neutro, vermelho como
+   accent principal e tipografia condensada/impactante — linguagem visual
+   comum a apps de streaming (dark UI + destaque vermelho), sem reproduzir
+   logotipo, fonte proprietária ou identidade de marca de terceiros. */
+
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --paper: #0a0a0a;
+  --surface: #141414;
+  --surface-hover: #1f1f1f;
+  --line: #2a2a2a;
+
+  --ink: #ffffff;
+  --ink-muted: #b3b3b3;
+  --ink-faint: #6d6d6d;
+
+  --accent: #e50914;
+  --accent-hover: #f6121d;
+  --accent-ink: #ff3b30;
+  --accent-soft: rgba(229, 9, 20, 0.16);
+
+  --gold: #e8b93f;
+  --danger: #ff453a;
+
+  --font-display: "Bebas Neue", "Arial Narrow", sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
