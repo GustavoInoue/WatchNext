@@ -35,10 +35,11 @@ qualquer título em uma lista pessoal para assistir depois.
 
 - [React 19](https://react.dev/)
 - [Vite](https://vite.dev/) (build tool)
-- [React Router DOM](https://reactrouter.com/) — rotas com layout
-  aninhado e rota dinâmica
+- [React Router](https://reactrouter.com/) — rotas com layout aninhado
+  e rota dinâmica
 - [lucide-react](https://lucide.dev/) — biblioteca de ícones
-- CSS puro (sem framework de UI), com design tokens em `src/index.css`
+- CSS puro (sem framework de UI), com as variáveis em `src/index.css` e
+  as classes em `src/App.css`
 - `localStorage` para persistir a lista pessoal
 
 ## API usada
@@ -55,7 +56,7 @@ qualquer título em uma lista pessoal para assistir depois.
 
 - **Descobrir** (`/descobrir`): formulário de filtros (tipo, humor,
   tempo, gêneros) que busca sugestões reais na TMDB.
-- **Detalhe do título** (`/titulo/:mediaType/:id`): sinopse, gêneros,
+- **Detalhe do título** (`/titulo/:tipo/:id`): sinopse, gêneros,
   duração, nota e onde assistir (quando disponível na API).
 - **Minha lista** (`/minha-lista`): títulos salvos, persistidos entre
   sessões via `localStorage`.
@@ -65,20 +66,52 @@ qualquer título em uma lista pessoal para assistir depois.
 
 ## Uso de IA
 
-Foi usada IA (Claude, da Anthropic) como apoio ao longo do processo,
-seguindo a metodologia de Spec Driven Development pedida no enunciado:
+Usamos IA (Claude, da Anthropic) como apoio ao longo de todo o processo,
+seguindo a metodologia de Spec Driven Development pedida no enunciado.
+Abaixo está exatamente onde ela entrou e onde não entrou.
 
-- Apoio na estruturação da spec (`docs/requirements.md` e
-  `docs/architecture.md`) a partir das decisões de produto definidas pelo
-  grupo (problema escolhido, mecânica de filtros, nome do produto).
-- Apoio na geração do código-base seguindo os padrões vistos em aula
-  (componentização, props, hooks `useState`/`useEffect`, React Router).
-- As decisões de produto, negócio e estética (qual problema resolver,
-  como o filtro de humor deveria funcionar, paleta de cores, nome do
-  produto) foram feitas pelo grupo antes da geração de código.
-- O grupo é responsável por revisar, entender e conseguir explicar todo
-  o código entregue, adaptando o que for necessário para os padrões
-  usados em sala.
+### Onde usamos
+
+- Na estruturação da spec (`docs/requirements.md` e
+  `docs/architecture.md`), a partir das decisões de produto que já
+  tínhamos tomado: qual problema resolver, a mecânica de filtrar por
+  humor e tempo, e o nome do produto.
+- Na escrita do código-base seguindo os padrões que vimos em aula —
+  componentização, props entre componentes, `useState`, `useEffect` e
+  React Router.
+- Como apoio para entender recursos de CSS que não conhecíamos, depois
+  de escolhermos as referências visuais.
+
+### O que decidimos sozinhos
+
+As decisões de produto, de negócio e de estética foram nossas, e vieram
+antes de qualquer código: qual problema atacar, como o filtro de humor
+deveria funcionar, a paleta, o nome e as referências visuais que
+escolhemos. Revisamos tudo o que entregamos e conseguimos explicar cada
+parte do código.
+
+### Recursos que foram além do que vimos em aula
+
+Escolhemos usar alguns recursos de CSS que não foram dados em aula,
+porque queríamos que a página tivesse um acabamento visual mais próximo
+dos sites que usamos como referência (ver `references/references.md`)
+e porque achamos que valia a pena apresentar algo mais bem resolvido. São
+eles:
+
+| Recurso | Para que usamos |
+|---|---|
+| `animation-timeline: view()` | Fazer os blocos aparecerem conforme a pessoa rola a página, sem usar JavaScript |
+| `:has()` | O "holofote" na grade de resultados: ao passar o mouse em um pôster, os outros escurecem |
+| `@property` | Animar o facho de luz que atravessa o fio fino abaixo do cabeçalho da home |
+| `mask-image` | Fazer a parede de pôsteres e a malha do fundo sumirem suavemente nas bordas |
+| `counter()` | Gerar a numeração 01–04 dos filtros e 01–03 dos passos direto pelo CSS |
+| `-webkit-text-stroke` | As linhas de título vazadas, em que só o contorno das letras aparece |
+| `feTurbulence` (SVG) | A textura de grão por cima de toda a página |
+
+Nenhum deles é obrigatório para o projeto funcionar: são todos
+acabamento visual. Pesquisamos cada um na documentação e testamos até
+entender como funcionam, para termos contexto do que estávamos usando e
+conseguirmos aplicar em outros projetos.
 
 ## Instruções de execução
 
@@ -124,15 +157,15 @@ npm run build
 watchnext/
 ├── docs/
 │   ├── requirements.md
-│   ├── architecture.md
-│   └── references/
-│       └── references.md
+│   └── architecture.md
+├── references/
+│   ├── references.md
+│   └── imagens/
 ├── src/
 │   ├── components/
 │   ├── pages/
-│   ├── data/
-│   ├── services/
 │   ├── App.jsx
+│   ├── App.css
 │   ├── main.jsx
 │   └── index.css
 ├── .env.example
@@ -140,5 +173,6 @@ watchnext/
 ```
 
 Veja `docs/requirements.md` para objetivo, user stories e critérios de
-aceitação, e `docs/architecture.md` para o detalhamento técnico de
-páginas, componentes, props, estados e efeitos.
+aceitação, `docs/architecture.md` para o detalhamento técnico de páginas,
+componentes, props, estados e efeitos, e `references/references.md` para
+as referências visuais que usamos.

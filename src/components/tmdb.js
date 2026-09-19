@@ -1,110 +1,96 @@
-// src/components/tmdb.js
-// Camada única de acesso à API do TMDB (The Movie Database).
-// Centralizar as chamadas aqui evita repetir a URL base e a chave em vários componentes.
+const URL_BASE = "https://api.themoviedb.org/3"
+const CHAVE_API = import.meta.env.VITE_TMDB_API_KEY
 
-const BASE_URL = "https://api.themoviedb.org/3";
-const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
+export const HUMORES = [
+    { id: "leve", nome: "Leve e divertido", generos: [35, 10751] },
+    { id: "tenso", nome: "Tenso e adrenalina", generos: [53, 28] },
+    { id: "emocionante", nome: "Emocionante", generos: [18] },
+    { id: "misterio", nome: "Mistério", generos: [9648, 80] },
+    { id: "fantasia", nome: "Fantasia e aventura", generos: [14, 12] }
+]
 
-// Mapeamento de "humor" (proposta própria do produto) para parâmetros da TMDB.
-// A TMDB não tem filtro de "humor" nativo, então traduzimos cada humor
-// para uma combinação de gêneros que representa esse clima.
-export const MOODS = [
-  { id: "leve", label: "Leve e divertido", genres: [35, 10751] }, // Comédia, Família
-  { id: "tenso", label: "Tenso e adrenalina", genres: [53, 28] }, // Thriller, Ação
-  { id: "emocionante", label: "Emocionante", genres: [18] }, // Drama
-  { id: "misterio", label: "Mistério", genres: [9648, 80] }, // Mistério, Crime
-  { id: "fantasia", label: "Fantasia e aventura", genres: [14, 12] }, // Fantasia, Aventura
-];
+export const TEMPOS = [
+    { id: "curto", nome: "Até 100 min", duracaoMaxima: 100 },
+    { id: "medio", nome: "Até 130 min", duracaoMaxima: 130 },
+    { id: "livre", nome: "Sem limite", duracaoMaxima: null }
+]
 
-// Faixas de tempo disponível, convertidas em duração máxima (em minutos)
-// usada no filtro with_runtime.lte da TMDB (funciona apenas para filmes).
-export const TIME_RANGES = [
-  { id: "curto", label: "Até 100 min", maxRuntime: 100 },
-  { id: "medio", label: "Até 130 min", maxRuntime: 130 },
-  { id: "livre", label: "Sem limite", maxRuntime: null },
-];
+export const TIPOS = [
+    { id: "movie", nome: "Filmes" },
+    { id: "tv", nome: "Séries" }
+]
 
-export const MEDIA_TYPES = [
-  { id: "movie", label: "Filmes" },
-  { id: "tv", label: "Séries" },
-];
+export const GENEROS = [
+    { id: 28, nome: "Ação" },
+    { id: 12, nome: "Aventura" },
+    { id: 16, nome: "Animação" },
+    { id: 35, nome: "Comédia" },
+    { id: 80, nome: "Crime" },
+    { id: 18, nome: "Drama" },
+    { id: 14, nome: "Fantasia" },
+    { id: 27, nome: "Terror" },
+    { id: 9648, nome: "Mistério" },
+    { id: 10749, nome: "Romance" },
+    { id: 878, nome: "Ficção científica" },
+    { id: 53, nome: "Thriller" }
+]
 
-// Lista de gêneros usada no formulário de filtros (id segue o padrão da TMDB).
-export const GENRES = [
-  { id: 28, label: "Ação" },
-  { id: 12, label: "Aventura" },
-  { id: 16, label: "Animação" },
-  { id: 35, label: "Comédia" },
-  { id: 80, label: "Crime" },
-  { id: 18, label: "Drama" },
-  { id: 14, label: "Fantasia" },
-  { id: 27, label: "Terror" },
-  { id: 9648, label: "Mistério" },
-  { id: 10749, label: "Romance" },
-  { id: 878, label: "Ficção científica" },
-  { id: 53, label: "Thriller" },
-];
+const montarUrl = (caminho, parametros) => {
+    const url = new URL(URL_BASE + caminho)
+    url.searchParams.set("api_key", CHAVE_API)
+    url.searchParams.set("language", "pt-BR")
 
-function buildUrl(path, params) {
-  if (params === undefined) {
-    params = {};
-  }
-
-  const url = new URL(BASE_URL + path);
-  url.searchParams.set("api_key", API_KEY);
-  url.searchParams.set("language", "pt-BR");
-
-  const keys = Object.keys(params);
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
-    const value = params[key];
-    if (value !== null && value !== undefined && value !== "") {
-      url.searchParams.set(key, value);
+    const chaves = Object.keys(parametros)
+    for (let i = 0; i < chaves.length; i++) {
+        const chave = chaves[i]
+        const valor = parametros[chave]
+        if (valor !== null && valor !== undefined && valor !== "") {
+            url.searchParams.set(chave, valor)
+        }
     }
-  }
 
-  return url.toString();
+    return url.toString()
 }
 
-async function request(path, params) {
-  const response = await fetch(buildUrl(path, params));
-  if (!response.ok) {
-    throw new Error("Erro na API do TMDB (" + response.status + ")");
-  }
-  return response.json();
+const buscar = (caminho, parametros) => {
+    return fetch(montarUrl(caminho, parametros)).then((resposta) => {
+        if (!resposta.ok) {
+            throw new Error("Erro na API do TMDB (" + resposta.status + ")")
+        }
+        return resposta.json()
+    })
 }
 
-// Busca títulos (filmes ou séries) combinando gêneros e duração.
-export function discoverTitles({ mediaType, genreIds, maxRuntime }) {
-  const params = {
-    sort_by: "popularity.desc",
-    "vote_count.gte": 100,
-  };
+export const buscarTitulos = (tipo, generos, duracaoMaxima) => {
+    const parametros = {
+        sort_by: "popularity.desc",
+        "vote_count.gte": 100
+    }
 
-  if (genreIds && genreIds.length > 0) {
-    params.with_genres = genreIds.join(",");
-  }
+    if (generos.length > 0) {
+        parametros.with_genres = generos.join(",")
+    }
 
-  // O filtro de duração máxima só existe no endpoint de filmes da TMDB.
-  if (mediaType === "movie" && maxRuntime) {
-    params["with_runtime.lte"] = maxRuntime;
-  }
+    if (tipo === "movie" && duracaoMaxima) {
+        parametros["with_runtime.lte"] = duracaoMaxima
+    }
 
-  return request("/discover/" + mediaType, params);
+    return buscar("/discover/" + tipo, parametros)
 }
 
-// Detalhe completo de um título específico.
-export function getTitleDetails(mediaType, id) {
-  return request("/" + mediaType + "/" + id, {
-    append_to_response: "videos,credits,watch/providers",
-  });
+export const buscarEmAlta = () => {
+    return buscar("/trending/all/week", {})
 }
 
-// Monta a URL completa de uma imagem do TMDB a partir do path retornado pela API.
-export function posterUrl(path, size) {
-  if (size === undefined) {
-    size = "w342";
-  }
-  if (!path) return null;
-  return "https://image.tmdb.org/t/p/" + size + path;
+export const buscarDetalhes = (tipo, id) => {
+    return buscar("/" + tipo + "/" + id, {
+        append_to_response: "videos,credits,watch/providers"
+    })
+}
+
+export const urlImagem = (caminho, tamanho) => {
+    if (!caminho) {
+        return null
+    }
+    return "https://image.tmdb.org/t/p/" + tamanho + caminho
 }

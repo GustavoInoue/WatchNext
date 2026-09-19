@@ -63,11 +63,11 @@ combinando esses critérios.
 ### F02 — Detalhe do título
 
 **Descrição:** ao clicar em um título sugerido ou salvo, a pessoa navega
-para uma rota dinâmica (`/titulo/:mediaType/:id`) que busca e exibe
+para uma rota dinâmica (`/titulo/:tipo/:id`) que busca e exibe
 sinopse, gêneros, duração, nota e onde assistir (quando disponível).
 
 **Critérios de aceitação:**
-- [x] A rota lê `mediaType` e `id` da URL e busca o detalhe correspondente na API
+- [x] A rota lê `tipo` e `id` da URL e busca o detalhe correspondente na API
 - [x] A página mostra pôster, nome, ano, duração, nota, gêneros e sinopse
 - [x] Quando a API retorna provedores de streaming (região BR), eles são exibidos
 - [x] A pessoa pode salvar/remover o título da lista pessoal direto nessa página
@@ -83,7 +83,7 @@ sinopse, gêneros, duração, nota e onde assistir (quando disponível).
 pela pessoa, com persistência entre sessões via `localStorage`.
 
 **Critérios de aceitação:**
-- [x] Um título só pode ser salvo uma vez (identificado por `id + mediaType`, já que IDs de filme e série podem se repetir na TMDB)
+- [x] Um título só pode ser salvo uma vez (identificado por `id + tipo`, já que IDs de filme e série podem se repetir na TMDB)
 - [x] A pessoa consegue remover um título salvo direto na grade, sem entrar no detalhe
 - [x] A lista persiste após recarregar a página (não depende de nova busca)
 

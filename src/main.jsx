@@ -1,17 +1,31 @@
-// src/main.jsx
-// Ponto de entrada da aplicação: monta o React na div#root e envolve tudo
-// com o BrowserRouter, necessário para o React Router funcionar.
+import { StrictMode } from 'react'
+import { createRoot } from 'react-dom/client'
+import { createBrowserRouter } from 'react-router'
+import { RouterProvider } from 'react-router/dom'
+import './index.css'
+import App from './App'
+import PaginaInicio from './pages/PaginaInicio'
+import PaginaDescobrir from './pages/PaginaDescobrir'
+import PaginaDetalhes from './pages/PaginaDetalhes'
+import PaginaMinhaLista from './pages/PaginaMinhaLista'
+import PaginaNaoEncontrada from './pages/PaginaNaoEncontrada'
 
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
-import App from "./App.jsx";
-import "./index.css";
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <App />,
+    errorElement: <PaginaNaoEncontrada />,
+    children: [
+      { index: true, element: <PaginaInicio /> },
+      { path: "descobrir", element: <PaginaDescobrir /> },
+      { path: "titulo/:tipo/:id", element: <PaginaDetalhes /> },
+      { path: "minha-lista", element: <PaginaMinhaLista /> }
+    ]
+  }
+]);
 
-createRoot(document.getElementById("root")).render(
+createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <RouterProvider router={router} />
   </StrictMode>
-);
+)

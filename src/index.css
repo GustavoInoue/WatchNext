@@ -1,27 +1,25 @@
-/* src/index.css
-   Design tokens globais do WatchNext.
-   Paleta estilo "streaming noturno": fundo preto neutro, vermelho como
-   accent principal e tipografia condensada/impactante — linguagem visual
-   comum a apps de streaming (dark UI + destaque vermelho), sem reproduzir
-   logotipo, fonte proprietária ou identidade de marca de terceiros. */
+@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap");
 
-@import url("https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap");
+/* Propriedade customizada tipada. Sem registrar o tipo aqui, o navegador
+   trata a variável como texto e não consegue animar entre dois valores. */
+@property --brilho {
+  syntax: "<length-percentage>";
+  initial-value: -25%;
+  inherits: false;
+}
 
 :root {
-  --paper: #0a0a0a;
-  --surface: #141414;
-  --surface-hover: #1f1f1f;
-  --line: #2a2a2a;
+  --paper: #080807;
+  --surface: #121211;
+  --surface-hover: #1c1c1a;
+  --line: #2b2b28;
 
-  --ink: #ffffff;
-  --ink-muted: #b3b3b3;
-  --ink-faint: #6d6d6d;
+  --bone: #f2efe9;
+  --bone-muted: #a5a099;
+  --bone-faint: #6b6660;
 
-  --accent: #e50914;
-  --accent-hover: #f6121d;
-  --accent-ink: #ff3b30;
-  --accent-soft: rgba(229, 9, 20, 0.16);
-
+  --red: #e50914;
+  --acid: #d8ff3e;
   --gold: #e8b93f;
   --danger: #ff453a;
 
@@ -37,15 +35,29 @@ html,
 body {
   margin: 0;
   padding: 0;
+  /* clip corta o excesso na horizontal sem criar uma barra de rolagem. */
+  overflow-x: clip;
 }
 
 body {
   background: var(--paper);
-  color: var(--ink);
+  color: var(--bone);
   font-family: var(--font-body);
   font-size: 16px;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Camada de grão de filme por cima de tudo, feita com um ruído em SVG. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 #root {
@@ -56,22 +68,41 @@ a {
   color: inherit;
 }
 
-button {
-  font-family: inherit;
-}
-
 img {
   max-width: 100%;
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-ink);
-  outline-offset: 2px;
+  outline: 2px solid var(--acid);
+  outline-offset: 3px;
+}
+
+/* Animação de entrada ligada à rolagem da página, sem nenhum JavaScript. */
+@keyframes revelar {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.revelar {
+  animation: revelar linear both;
+  animation-timeline: view();
+  animation-range: entry 5% cover 30%;
 }
 
 @media (prefers-reduced-motion: reduce) {
   * {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .revelar {
+    opacity: 1;
+    transform: none;
   }
 }
